@@ -2,6 +2,7 @@ int gasSensorPin = A0;
 int flameSensorPin = A1;
 int pirSensorPin = 2;
 int relayPin = 3;
+int buzzPin = 8;
 
 int flameValue;
 int gasValue;
@@ -34,5 +35,15 @@ void loop() {
   pirValue = digitalRead(pirSensorPin);
   Serial.print("PirValue= ");
   Serial.println(pirValue);
+
+  noTone(buzzPin);
+  delay(200);
+  tone(buzzPin,100,300);
+  delay(1000);
+  tone(buzzPin,100,300);
+  delay(1000);
+  tone(buzzPin,100,300);
+  delay(1000);
+  noTone(buzzPin);
 
 }
