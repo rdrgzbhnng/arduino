@@ -19,18 +19,18 @@ void setup() {
 
 void loop() {
   gasValue=analogRead(gasSensorPin);
-  // Serial.print("GasValue= ");
-  // Serial.println(gasValue);
+  Serial.print("GasValue= ");
+  Serial.println(gasValue);
   
   flameValue=analogRead(flameSensorPin);
-  // Serial.print("FlameValue= ");
-  // Serial.println(flameValue);
+  Serial.print("FlameValue= ");
+  Serial.println(flameValue);
 
   delay(10000);
 
-  // digitalWrite(relayPin, HIGH);
-  // delay(300);
-  // digitalWrite(relayPin, LOW);
+  digitalWrite(relayPin, HIGH);
+  delay(300);
+  digitalWrite(relayPin, LOW);
 
   pirValue = digitalRead(pirSensorPin);
   Serial.print("PirValue= ");
