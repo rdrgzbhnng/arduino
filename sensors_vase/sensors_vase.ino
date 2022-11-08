@@ -1,27 +1,23 @@
 void setup() {
   Serial.begin(9600);
 }
- 
+
 void loop() {
   float sensor_volt;
-  float RS_air;
-  float R0;
-  float sensorValue;
- 
-  for(int x = 0 ; x < 100 ; x++) {
-    sensorValue = sensorValue + analogRead(A0);
-  }
-  sensorValue = sensorValue/100.0;
+  float RS_gas;
+  float ratio;
+  int sensorValue = analogRead(A0);
+  sensor_volt=(float)sensorValue/1024*5.0;
+  RS_gas = (5.0-sensor_volt)/sensor_volt;
 
-  sensor_volt = sensorValue/1024*5.0;
-  RS_air = (5.0-sensor_volt)/sensor_volt;
-  R0 = RS_air/9.9;
+  ratio = RS_gas/0.165;
 
   Serial.print("sensor_volt = ");
-  Serial.print(sensor_volt);
-  Serial.println("V");
+  Serial.println(sensor_volt);
+  Serial.print("RS_ratio = ");
+  Serial.println(RS_gas);
+  Serial.print("Rs/R0 = ");
+  Serial.println(ratio);
 
-  Serial.print("R0 = ");
-  Serial.println(R0);
   delay(1000);
 }
