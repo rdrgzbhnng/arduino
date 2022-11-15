@@ -4,6 +4,9 @@
 
 SHT31 sht31 = SHT31();
 
+int relayPin01 = 0;
+int relayPin02 = 1;
+
 int waterSensorPin = 2;
 int dustSensorPin = 4;
 
@@ -69,6 +72,12 @@ void setup() {
   pinMode(soilMoistureSensor06Pin, INPUT);
   pinMode(waterSensorPin, INPUT);
   pinMode(dustSensorPin, INPUT);
+
+  pinMode(relayPin01, OUTPUT);
+  pinMode(relayPin02, OUTPUT);
+
+  digitalWrite(relayPin01, HIGH);
+  digitalWrite(relayPin02, HIGH);
 
   sht31.begin();
   startTime = millis();
@@ -252,6 +261,18 @@ void loop() {
     Serial.println("---------------------------------");
     Serial.println("---------------------------------");
     Serial.println("");
+
+    if (soilMoisture01Percent > 50) {
+      digitalWrite(relayPin01, LOW);
+    } else {
+      digitalWrite(relayPin01, HIGH);
+    }
+
+    if (soilMoisture02Percent < 50) {
+      digitalWrite(relayPin02, LOW);
+    } else {
+      digitalWrite(relayPin02, HIGH);
+    }
 
     lowPulseOccupancy = 0;
     
