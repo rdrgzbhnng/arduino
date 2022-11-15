@@ -1,3 +1,9 @@
+#include <Arduino.h>
+#include <Wire.h>
+#include "SHT31.h"
+
+SHT31 sht31 = SHT31();
+
 int waterSensorPin = 2;
 int dustSensorPin = 4;
 
@@ -49,6 +55,9 @@ float concentration = 0;
 int waterValue;
 String waterStatus;
 
+float temperatureValue;
+float humidityValue;
+
 void setup() {
   Serial.begin(9600);
 
@@ -61,6 +70,7 @@ void setup() {
   pinMode(waterSensorPin, INPUT);
   pinMode(dustSensorPin, INPUT);
 
+  sht31.begin();
   startTime = millis();
 }
 
@@ -76,23 +86,40 @@ void loop() {
     waterStatus = "";
 
     if (waterValue == 1) {
-      waterStatus = "Nops";
+      waterStatus = "Nothing detected";
     } else {
-      waterStatus = "Yep!";
+      waterStatus = "Water detected";
     }
 
+    float temperatureValue = sht31.getTemperature();
+    float humidityValue = sht31.getHumidity();
+
     Serial.println("---------------------------------");
     Serial.println("---------------------------------");
 
-    Serial.print("lowpulseoccupancy = ");
+    Serial.print("lowPulseOccupancy = ");
     Serial.println(lowPulseOccupancy);
     Serial.print("ratio = ");
     Serial.println(ratio);
     Serial.print("concentration = ");
     Serial.println(concentration);
-    Serial.print("there is water? ");
+
+    Serial.println("---------------------------------");
+    Serial.println("---------------------------------");
+
+    Serial.print("waterStatus = ");
     Serial.println(waterStatus);
-    
+
+    Serial.println("---------------------------------");
+    Serial.println("---------------------------------");
+
+    Serial.print("temperatureValue = "); 
+    Serial.print(temperatureValue);
+    Serial.println(" C");
+    Serial.print("humidityValue = "); 
+    Serial.print(humidityValue);
+    Serial.println("%"); 
+
     soilMoisture01Value = analogRead(soilMoistureSensor01Pin);
     soilMoisture02Value = analogRead(soilMoistureSensor02Pin);
     soilMoisture03Value = analogRead(soilMoistureSensor03Pin);
@@ -222,6 +249,10 @@ void loop() {
       Serial.println("%");
     }
     
+    Serial.println("---------------------------------");
+    Serial.println("---------------------------------");
+    Serial.println("");
+
     lowPulseOccupancy = 0;
     
     startTime = millis();
