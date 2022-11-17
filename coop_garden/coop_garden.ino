@@ -1,7 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "SHT31.h"
+#include "Si115X_SAMD21.h"
 
+Si115X si1151;
 SHT31 sht31 = SHT31();
 
 int relayPin01 = 0;
@@ -61,8 +63,18 @@ String waterStatus;
 float temperatureValue;
 float humidityValue;
 
+float sunLightIR;
+float sunLightVisible;
+float sunLightUV;
+
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
+  uint8_t conf[4];
+
+  if (!si1151.Begin())
+    Serial.println("Si1151 is not ready!");
+  else
+    Serial.println("Si1151 is ready!");
 
   pinMode(soilMoistureSensor01Pin, INPUT);
   pinMode(soilMoistureSensor02Pin, INPUT);
@@ -260,7 +272,6 @@ void loop() {
     
     Serial.println("---------------------------------");
     Serial.println("---------------------------------");
-    Serial.println("");
 
     if (soilMoisture01Percent > 50) {
       digitalWrite(relayPin01, LOW);
@@ -274,8 +285,22 @@ void loop() {
       digitalWrite(relayPin02, HIGH);
     }
 
+    sunLightIR = si1151.ReadHalfWord();
+    sunLightVisible = si1151.ReadHalfWord_VISIBLE();
+    sunLightUV = si1151.ReadHalfWord_UV();
+
+    Serial.print("sunLightIR = ");
+    Serial.println(sunLightIR);
+    Serial.print("sunLightVisible = ");
+    Serial.println(sunLightVisible);
+    Serial.print("sunLightUV = ");
+    Serial.println(sunLightUV);
+
+    Serial.println("---------------------------------");
+    Serial.println("---------------------------------");
+    Serial.println("");
+
     lowPulseOccupancy = 0;
-    
     startTime = millis();
   }
 }
