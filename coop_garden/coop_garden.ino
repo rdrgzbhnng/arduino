@@ -2,6 +2,15 @@
 #include <Wire.h>
 #include "SHT31.h"
 #include "Si115X_SAMD21.h"
+#include <SPI.h>
+#include <WiFiNINA.h>
+#include "wifi_secrets.h"
+
+char ssid[] = SECRET_SSID;
+char pass[] = SECRET_PASS;
+int status = WL_IDLE_STATUS;
+char server[] = "maker.ifttt.com";
+WiFiClient client;
 
 Si115X si1151;
 SHT31 sht31 = SHT31();
@@ -91,6 +100,16 @@ void setup() {
   digitalWrite(relayPin01, HIGH);
   digitalWrite(relayPin02, HIGH);
 
+  if (WiFi.status() == WL_NO_MODULE) {
+    Serial.println("Communication with WiFi module failed!");
+    while (true);
+  }
+
+  String fv = WiFi.firmwareVersion();
+  if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
+    Serial.println("Please upgrade the firmware");
+  }
+
   sht31.begin();
   startTime = millis();
 }
@@ -100,6 +119,7 @@ void loop() {
   lowPulseOccupancy = lowPulseOccupancy + duration;
 
   if ((millis()-startTime) > SAMPLE_TIME) {
+
     ratio = lowPulseOccupancy / (SAMPLE_TIME * 10.0);
     concentration = 1.1*pow(ratio,3)-3.8*pow(ratio,2)+520*ratio+0.62;
 
@@ -273,18 +293,6 @@ void loop() {
     Serial.println("---------------------------------");
     Serial.println("---------------------------------");
 
-    if (soilMoisture01Percent > 50) {
-      digitalWrite(relayPin01, LOW);
-    } else {
-      digitalWrite(relayPin01, HIGH);
-    }
-
-    if (soilMoisture02Percent < 50) {
-      digitalWrite(relayPin02, LOW);
-    } else {
-      digitalWrite(relayPin02, HIGH);
-    }
-
     sunLightIR = si1151.ReadHalfWord();
     sunLightVisible = si1151.ReadHalfWord_VISIBLE();
     sunLightUV = si1151.ReadHalfWord_UV();
@@ -298,9 +306,49 @@ void loop() {
 
     Serial.println("---------------------------------");
     Serial.println("---------------------------------");
+
+    if (soilMoisture01Percent > 80) {
+      digitalWrite(relayPin01, LOW);
+      sendAlertMessage();
+    } else {
+      digitalWrite(relayPin01, HIGH);
+    }
+
+    Serial.println("---------------------------------");
+    Serial.println("---------------------------------");
     Serial.println("");
 
     lowPulseOccupancy = 0;
     startTime = millis();
   }
+}
+
+void sendAlertMessage () {
+  while (status != WL_CONNECTED) {
+    Serial.print("Attempting to connect... ");
+    status = WiFi.begin(ssid, pass);
+    delay(10000);
+  }
+
+  Serial.println("Connected to WiFi");
+  printWifiStatus();
+
+  Serial.println("\nStarting connection to server...");
+  if (client.connect(server, 80)) {
+    Serial.println("connected to server;");
+    client.println("GET /trigger/HuertoAlert/with/key/dVJCyJon9DxP4MkPio8RH4 HTTP/1.1");
+    client.println("Host: maker.ifttt.com");
+    client.println("Connection: close");
+    client.println();
+    Serial.println("connection closed.");
+   }
+}
+
+void printWifiStatus() {
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
 }
