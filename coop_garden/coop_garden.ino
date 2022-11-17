@@ -4,6 +4,11 @@
 #include "Si115X_SAMD21.h"
 #include <SPI.h>
 #include <WiFiNINA.h>
+
+#include "init_vars.h"
+#include "pin_list.h"
+#include "sensors_settings.h"
+#include "status_report.h"
 #include "wifi_secrets.h"
 
 char ssid[] = SECRET_SSID;
@@ -14,67 +19,6 @@ WiFiClient client;
 
 Si115X si1151;
 SHT31 sht31 = SHT31();
-
-int relayPin01 = 0;
-int relayPin02 = 1;
-
-int waterSensorPin = 2;
-int dustSensorPin = 4;
-
-int soilMoistureSensor01Pin = A0;
-int soilMoisture01Value = 0;
-int soilMoisture01Percent=0;
-const int DRY_VALUE01 = 20;
-const int WET_VALUE01 = 620;
-
-int soilMoistureSensor02Pin = A1;
-int soilMoisture02Value = 0;
-int soilMoisture02Percent=0;
-const int DRY_VALUE02 = 10;
-const int WET_VALUE02 = 630;
-
-int soilMoistureSensor03Pin = A2;
-int soilMoisture03Value = 0;
-int soilMoisture03Percent=0;
-const int DRY_VALUE03 = 10;
-const int WET_VALUE03 = 720;
-
-int soilMoistureSensor04Pin = A3;
-int soilMoisture04Value = 0;
-int soilMoisture04Percent=0;
-const int DRY_VALUE04 = 690;
-const int WET_VALUE04 = 470;
-
-int soilMoistureSensor05Pin = A4;
-int soilMoisture05Value = 0;
-int soilMoisture05Percent=0;
-const int DRY_VALUE05 = 730;
-const int WET_VALUE05 = 420;
-
-int soilMoistureSensor06Pin = A5;
-int soilMoisture06Value = 0;
-int soilMoisture06Percent=0;
-const int DRY_VALUE06 = 500;
-const int WET_VALUE06 = 270;
-
-unsigned long duration;
-unsigned long startTime;
-
-const long SAMPLE_TIME = 60000;
-unsigned long lowPulseOccupancy = 0;
-
-float ratio = 0;
-float concentration = 0;
-
-int waterValue;
-String waterStatus;
-
-float temperatureValue;
-float humidityValue;
-
-float sunLightIR;
-float sunLightVisible;
-float sunLightUV;
 
 void setup() {
   Serial.begin(115200);
@@ -135,32 +79,6 @@ void loop() {
     float temperatureValue = sht31.getTemperature();
     float humidityValue = sht31.getHumidity();
 
-    Serial.println("---------------------------------");
-    Serial.println("---------------------------------");
-
-    Serial.print("lowPulseOccupancy = ");
-    Serial.println(lowPulseOccupancy);
-    Serial.print("ratio = ");
-    Serial.println(ratio);
-    Serial.print("concentration = ");
-    Serial.println(concentration);
-
-    Serial.println("---------------------------------");
-    Serial.println("---------------------------------");
-
-    Serial.print("waterStatus = ");
-    Serial.println(waterStatus);
-
-    Serial.println("---------------------------------");
-    Serial.println("---------------------------------");
-
-    Serial.print("temperatureValue = "); 
-    Serial.print(temperatureValue);
-    Serial.println(" C");
-    Serial.print("humidityValue = "); 
-    Serial.print(humidityValue);
-    Serial.println("%"); 
-
     soilMoisture01Value = analogRead(soilMoistureSensor01Pin);
     soilMoisture02Value = analogRead(soilMoistureSensor02Pin);
     soilMoisture03Value = analogRead(soilMoistureSensor03Pin);
@@ -175,137 +93,9 @@ void loop() {
     soilMoisture05Percent = map(soilMoisture05Value, DRY_VALUE05, WET_VALUE05, 0, 100);
     soilMoisture06Percent = map(soilMoisture06Value, DRY_VALUE06, WET_VALUE06, 0, 100);
 
-    Serial.println("---------------------------------");
-    Serial.println("---------------------------------");
-
-    Serial.print("DRY_VALUE01 = ");
-    Serial.println(DRY_VALUE01);
-    Serial.print("WET_VALUE01 = ");
-    Serial.println(WET_VALUE01);
-    Serial.print("soilMoisture01Value = ");
-    Serial.println(soilMoisture01Value);
-
-    Serial.print("soilMoisture01Percent = ");
-    if(soilMoisture01Percent >= 100) {
-      Serial.println("100 %");
-    } else if(soilMoisture01Percent <=0) {
-      Serial.println("0 %");
-    } else if(soilMoisture01Percent >0 && soilMoisture01Percent < 100) {
-      Serial.print(soilMoisture01Percent);
-      Serial.println("%");
-    }
-
-    Serial.println("---------------------------------");
-
-    Serial.print("DRY_VALUE02 = ");
-    Serial.println(DRY_VALUE02);
-    Serial.print("WET_VALUE02 = ");
-    Serial.println(WET_VALUE02);
-    Serial.print("soilMoisture02Value = ");
-    Serial.println(soilMoisture02Value);
-    
-    Serial.print("soilMoisture02Percent = ");
-    if(soilMoisture02Percent >= 100) {
-      Serial.println("100 %");
-    } else if(soilMoisture02Percent <=0) {
-      Serial.println("0 %");
-    } else if(soilMoisture02Percent >0 && soilMoisture02Percent < 100) {
-      Serial.print(soilMoisture02Percent);
-      Serial.println("%");
-    }
-
-    Serial.println("---------------------------------");
-
-    Serial.print("DRY_VALUE03 = ");
-    Serial.println(DRY_VALUE03);
-    Serial.print("WET_VALUE03 = ");
-    Serial.println(WET_VALUE03);
-    Serial.print("soilMoisture03Value = ");
-    Serial.println(soilMoisture03Value);
-
-    Serial.print("soilMoisture03Percent = ");
-    if(soilMoisture03Percent >= 100) {
-      Serial.println("100 %");
-    } else if(soilMoisture03Percent <=0) {
-      Serial.println("0 %");
-    } else if(soilMoisture03Percent >0 && soilMoisture03Percent < 100) {
-      Serial.print(soilMoisture03Percent);
-      Serial.println("%");
-    }
-
-    Serial.println("---------------------------------");
-
-    Serial.print("DRY_VALUE04 = ");
-    Serial.println(DRY_VALUE04);
-    Serial.print("WET_VALUE04 = ");
-    Serial.println(WET_VALUE04);
-    Serial.print("soilMoisture04Value = ");
-    Serial.println(soilMoisture04Value);
-
-    Serial.print("soilMoisture04Percent = ");
-    if(soilMoisture04Percent >= 100) {
-      Serial.println("100 %");
-    } else if(soilMoisture04Percent <=0) {
-      Serial.println("0 %");
-    } else if(soilMoisture04Percent >0 && soilMoisture04Percent < 100) {
-      Serial.print(soilMoisture04Percent);
-      Serial.println("%");
-    }
-
-    Serial.println("---------------------------------");
-
-    Serial.print("DRY_VALUE05 = ");
-    Serial.println(DRY_VALUE05);
-    Serial.print("WET_VALUE05 = ");
-    Serial.println(WET_VALUE05);
-    Serial.print("soilMoisture05Value = ");
-    Serial.println(soilMoisture05Value);
-
-    Serial.print("soilMoisture05Percent = ");
-    if(soilMoisture05Percent >= 100) {
-      Serial.println("100 %");
-    } else if(soilMoisture05Percent <=0) {
-      Serial.println("0 %");
-    } else if(soilMoisture05Percent >0 && soilMoisture05Percent < 100) {
-      Serial.print(soilMoisture05Percent);
-      Serial.println("%");
-    }
-
-    Serial.println("---------------------------------");
-
-    Serial.print("DRY_VALUE06 = ");
-    Serial.println(DRY_VALUE06);
-    Serial.print("WET_VALUE06 = ");
-    Serial.println(WET_VALUE06);
-    Serial.print("soilMoisture06Value = ");
-    Serial.println(soilMoisture06Value);
-
-    Serial.print("soilMoisture06Percent = ");
-    if(soilMoisture06Percent >= 100) {
-      Serial.println("100 %");
-    } else if(soilMoisture06Percent <=0) {
-      Serial.println("0 %");
-    } else if(soilMoisture06Percent >0 && soilMoisture06Percent < 100) {
-      Serial.print(soilMoisture06Percent);
-      Serial.println("%");
-    }
-    
-    Serial.println("---------------------------------");
-    Serial.println("---------------------------------");
-
     sunLightIR = si1151.ReadHalfWord();
     sunLightVisible = si1151.ReadHalfWord_VISIBLE();
     sunLightUV = si1151.ReadHalfWord_UV();
-
-    Serial.print("sunLightIR = ");
-    Serial.println(sunLightIR);
-    Serial.print("sunLightVisible = ");
-    Serial.println(sunLightVisible);
-    Serial.print("sunLightUV = ");
-    Serial.println(sunLightUV);
-
-    Serial.println("---------------------------------");
-    Serial.println("---------------------------------");
 
     if (soilMoisture01Percent > 80) {
       digitalWrite(relayPin01, LOW);
@@ -314,9 +104,7 @@ void loop() {
       digitalWrite(relayPin01, HIGH);
     }
 
-    Serial.println("---------------------------------");
-    Serial.println("---------------------------------");
-    Serial.println("");
+    printStatusReport();
 
     lowPulseOccupancy = 0;
     startTime = millis();
