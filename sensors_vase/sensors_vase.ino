@@ -1,8 +1,21 @@
 #include "init_vars.h"
 #include "pin_list.h"
 
+#include "Air_Quality_Sensor.h"
+AirQualitySensor sensor(airQualitySensorPin);
+
 void setup() {
   Serial.begin(9600);
+  while (!Serial);
+
+  Serial.println("Waiting to init..");
+  delay(20000);
+
+  if (sensor.init()) {
+    Serial.println("Sensor ready.");
+  } else {
+    Serial.println("Sensor ERROR!");
+  }
 }
 
 void loop() {
@@ -19,5 +32,21 @@ void loop() {
   Serial.print("Rs/R0 = ");
   Serial.println(ratio);
 
-  delay(1000);
+
+  qualityAir = sensor.slope();
+
+  Serial.print("Sensor value: ");
+  Serial.println(sensor.getValue());
+
+  if (qualityAir == AirQualitySensor::FORCE_SIGNAL) {
+    Serial.println("High pollution! Force signal active.");
+  } else if (qualityAir == AirQualitySensor::HIGH_POLLUTION) {
+    Serial.println("High pollution!");
+  } else if (qualityAir == AirQualitySensor::LOW_POLLUTION) {
+    Serial.println("Low pollution!");
+  } else if (qualityAir == AirQualitySensor::FRESH_AIR) {
+    Serial.println("Fresh air.");
+  }
+
+  delay(3000);
 }
