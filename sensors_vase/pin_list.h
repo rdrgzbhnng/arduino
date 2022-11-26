@@ -1,0 +1,1 @@
+int dustDetectionSensorPin = A0;

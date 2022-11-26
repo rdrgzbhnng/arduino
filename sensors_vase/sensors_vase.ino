@@ -1,12 +1,12 @@
+#include "init_vars.h"
+#include "pin_list.h"
+
 void setup() {
   Serial.begin(9600);
 }
 
 void loop() {
-  float sensor_volt;
-  float RS_gas;
-  float ratio;
-  int sensorValue = analogRead(A0);
+  sensorValue = analogRead(dustDetectionSensorPin);
   sensor_volt=(float)sensorValue/1024*5.0;
   RS_gas = (5.0-sensor_volt)/sensor_volt;
 
