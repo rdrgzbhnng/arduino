@@ -97,9 +97,15 @@ void loop() {
     sunLightVisible = si1151.ReadHalfWord_VISIBLE();
     sunLightUV = si1151.ReadHalfWord_UV();
 
-    if (soilMoisture01Percent > 80) {
+    messageTitle = "Alerta de falta de agua";
+    messageTarget = "Cubo de las cebollitas";
+    messageValue = "Humedad:" + String(soilMoisture01Percent) + "%";
+    fullMessage = "value1=" + messageTitle + "&value2=" + messageTarget  + "&value3=" + messageValue;
+    fullMessage.replace(" ", "%20");
+
+    if (soilMoisture01Percent < 20) {
       digitalWrite(relayPin01, LOW);
-      sendAlertMessage();
+      sendAlertMessage(fullMessage);
     } else {
       digitalWrite(relayPin01, HIGH);
     }
@@ -111,7 +117,7 @@ void loop() {
   }
 }
 
-void sendAlertMessage () {
+void sendAlertMessage (String messageParams) {
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect... ");
     status = WiFi.begin(ssid, pass);
@@ -124,7 +130,10 @@ void sendAlertMessage () {
   Serial.println("\nStarting connection to server...");
   if (client.connect(server, 80)) {
     Serial.println("connected to server;");
-    client.println("GET /trigger/HuertoAlert/with/key/dVJCyJon9DxP4MkPio8RH4 HTTP/1.1");
+    client.print("GET ");
+    client.print("/trigger/HuertoAlert/with/key/dVJCyJon9DxP4MkPio8RH4?");
+    client.print(messageParams);
+    client.println(" HTTP/1.1");
     client.println("Host: maker.ifttt.com");
     client.println("Connection: close");
     client.println();
