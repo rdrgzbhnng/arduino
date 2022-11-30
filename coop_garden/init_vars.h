@@ -34,3 +34,7 @@ String fullMessage;
 String messageTitle;
 String messageTarget;
 String messageValue;
+
+String baselineValue;
+int carbonDioxide;
+int tVolatileOrganicCompounds;

@@ -4,6 +4,7 @@
 #include "Si115X_SAMD21.h"
 #include <SPI.h>
 #include <WiFiNINA.h>
+#include "DFRobot_CCS811.h"
 
 #include "init_vars.h"
 #include "pin_list.h"
@@ -20,6 +21,8 @@ WiFiClient client;
 Si115X si1151;
 SHT31 sht31 = SHT31();
 
+DFRobot_CCS811 CCS811;
+
 void setup() {
   Serial.begin(115200);
   uint8_t conf[4];
@@ -28,6 +31,11 @@ void setup() {
     Serial.println("Si1151 is not ready!");
   else
     Serial.println("Si1151 is ready!");
+
+  while(CCS811.begin() != 0) {
+    Serial.println("Failed to init Air Quality chip!");
+    delay(1000);
+  }
 
   pinMode(soilMoistureSensor01Pin, INPUT);
   pinMode(soilMoistureSensor02Pin, INPUT);
@@ -63,6 +71,8 @@ void loop() {
   lowPulseOccupancy = lowPulseOccupancy + duration;
 
   if ((millis()-startTime) > SAMPLE_TIME) {
+
+    air_quality();
 
     ratio = lowPulseOccupancy / (SAMPLE_TIME * 10.0);
     concentration = 1.1*pow(ratio,3)-3.8*pow(ratio,2)+520*ratio+0.62;
@@ -104,10 +114,10 @@ void loop() {
     fullMessage.replace(" ", "%20");
 
     if (soilMoisture01Percent < 20) {
-      digitalWrite(relayPin01, LOW);
-      sendAlertMessage(fullMessage);
+      // digitalWrite(relayPin01, LOW);
+      // sendAlertMessage(fullMessage);
     } else {
-      digitalWrite(relayPin01, HIGH);
+      // digitalWrite(relayPin01, HIGH);
     }
 
     printStatusReport();
@@ -148,4 +158,21 @@ void printWifiStatus() {
   IPAddress ip = WiFi.localIP();
   Serial.print("IP Address: ");
   Serial.println(ip);
+}
+
+void air_quality() {
+  baselineValue = String(CCS811.readBaseLine(), HEX);
+  baselineValue.toUpperCase();
+
+  String hexBaselineValue = "0x"+baselineValue;
+  int intHexBaselineValue = hexBaselineValue.toInt();
+
+  if(CCS811.checkDataReady() == true){
+    carbonDioxide = CCS811.getCO2PPM();
+    tVolatileOrganicCompounds = CCS811.getTVOCPPB();
+  } else {
+    Serial.println("Data is not ready!");
+  }
+
+  CCS811.writeBaseLine(intHexBaselineValue);
 }

@@ -152,5 +152,16 @@ void printStatusReport() {
 
     Serial.println("---------------------------------");
     Serial.println("---------------------------------");
+
+    Serial.print("baselineValue = ");
+    Serial.println(baselineValue);
+    Serial.print("CO2 = ");
+    Serial.print(carbonDioxide);
+    Serial.println("ppm");
+    Serial.print("TVOC = ");
+    Serial.print(tVolatileOrganicCompounds);
+    Serial.println("ppb");
+    Serial.println("---------------------------------");
+    Serial.println("---------------------------------");
     Serial.println("");
 }
