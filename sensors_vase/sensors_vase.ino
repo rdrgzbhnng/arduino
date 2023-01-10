@@ -92,11 +92,11 @@ void gasDetection() {
 
 
 void dustDetection() {
-  if (dustSensor.read_sensor_value(buf, 29)) {
+  if (dustSensor.read_sensor_value(dustData, 29)) {
     Serial.println("HM330X read result failed!");
   }
-  parse_result_value(buf);
-  parse_result(buf);
+  parse_result_value(dustData);
+  parse_result(dustData);
  
   Serial.println("------------------------");
 }
