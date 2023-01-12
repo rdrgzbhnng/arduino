@@ -7,3 +7,4 @@
 * https://wiki.seeedstudio.com/Grove-Gas_Sensor-MQ9/
 * https://wiki.seeedstudio.com/Grove-Temperature_and_Humidity_Sensor_Pro/
 * https://github.com/adafruit/DHT-sensor-library/
+* https://github.com/adafruit/Adafruit_Sensor/
