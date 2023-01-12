@@ -7,6 +7,11 @@ AirQualitySensor airSensor(airQualityPin);
 HM330X dustSensor;
 #include "hm330x_errors.h"
 
+#include "DHT.h"
+#define DHTPIN 2
+#define DHTTYPE DHT22
+DHT dht(DHTPIN, DHTTYPE);
+
 void setup() {
   Serial.begin(115200);
   while (!Serial);
@@ -25,6 +30,9 @@ void setup() {
     Serial.println("HM330X init failed!!");
     while (1);
   }
+
+  Serial.println(F("DHTxx test!"));
+  dht.begin();
 }
 
 
@@ -32,6 +40,7 @@ void loop() {
   airQuality();
   gasDetection();
   dustDetection();
+  humidityAndTemperature();
 
   delay(10000);
 }
@@ -98,5 +107,32 @@ void dustDetection() {
   parse_result_value(dustData);
   parse_result(dustData);
  
+  Serial.println("------------------------");
+}
+
+
+void humidityAndTemperature() {
+
+  humidity = dht.readHumidity();
+  temperature = dht.readTemperature();
+  hic = dht.computeHeatIndex(temperature, humidity, false);
+
+  if (isnan(humidity) || isnan(temperature)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+    return;
+  }
+
+  Serial.print(F("Humidity: "));
+  Serial.print(humidity);
+  Serial.println(F("%"));
+
+  Serial.print(F("Temperature: "));
+  Serial.print(temperature);
+  Serial.println(F("°C"));
+
+  Serial.print(F("Heat index: "));
+  Serial.print(hic);
+  Serial.println(F("°C"));
+
   Serial.println("------------------------");
 }

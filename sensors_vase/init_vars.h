@@ -9,6 +9,9 @@ float R0;
 float sensorValue;
 float RS_gas;
 float ratio;
+float humidity;
+float temperature;
+float hic;
 
 uint8_t dustData[30];
 
