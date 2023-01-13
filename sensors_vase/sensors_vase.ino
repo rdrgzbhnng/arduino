@@ -1,5 +1,8 @@
 #include "init_vars.h"
 
+#include <U8x8lib.h>
+U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(U8X8_PIN_NONE);
+
 #include "Air_Quality_Sensor.h"
 AirQualitySensor airSensor(airQualityPin);
 
@@ -12,12 +15,16 @@ HM330X dustSensor;
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 
+
 void setup() {
   Serial.begin(115200);
   while (!Serial);
 
-  Serial.println("Waiting to init..");
-  delay(20000);
+  Serial.println("Waiting to init...");
+  delay(30000);
+
+  u8x8.begin();
+  u8x8.setFlipMode(1);
 
   if (airSensor.init()) {
     Serial.println("Sensor ready.");
@@ -25,10 +32,9 @@ void setup() {
     Serial.println("Sensor ERROR!");
   }
 
-  Serial.println("Serial start");
-  if (dustSensor.init()) {
-    Serial.println("HM330X init failed!!");
-    while (1);
+  Serial.println("Serial started.");
+  if (dustSensor.init() == -2) {
+    Serial.println("HM330X init failed!");
   }
 
   Serial.println(F("DHTxx test!"));
@@ -41,6 +47,7 @@ void loop() {
   gasDetection();
   dustDetection();
   humidityAndTemperature();
+  oledDisplay();
 
   delay(10000);
 }
@@ -133,6 +140,14 @@ void humidityAndTemperature() {
   Serial.print(F("Heat index: "));
   Serial.print(hic);
   Serial.println(F("°C"));
+
+  Serial.println("------------------------");
+}
+
+void oledDisplay() {
+  u8x8.setFont(u8x8_font_chroma48medium8_r);
+  u8x8.setCursor(0, 0);
+  u8x8.print("Hello World!");
 
   Serial.println("------------------------");
 }
