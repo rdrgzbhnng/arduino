@@ -1,5 +1,6 @@
 int airQualityPin = A0;
 int gasDetectionPin = A6;
+int ledPin = 4;
 
 int quality;
 

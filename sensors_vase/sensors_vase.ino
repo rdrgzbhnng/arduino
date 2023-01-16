@@ -20,6 +20,8 @@ DHT dht(DHTPIN, DHTTYPE);
 
 
 void setup() {
+  pinMode(ledPin, OUTPUT);
+
   s16 err;
   u16 scaled_ethanol_signal, scaled_h2_signal;
 
@@ -55,6 +57,7 @@ void loop() {
   humidityAndTemperature();
   co2AndTvocConcentration();
   oledDisplay();
+  ledControl();
 
   delay(10000);
 }
@@ -178,4 +181,13 @@ void oledDisplay() {
   u8x8.print("Hello World!");
 
   Serial.println("------------------------");
+}
+
+
+void ledControl() {
+  digitalWrite(ledPin, HIGH);
+  delay(1000);
+  digitalWrite(ledPin, LOW);
+
+  Serial.println("========================");
 }
