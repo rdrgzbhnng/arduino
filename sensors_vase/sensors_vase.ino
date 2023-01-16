@@ -32,24 +32,19 @@ void setup() {
   u8x8.begin();
   u8x8.setFlipMode(1);
 
-  if (airSensor.init()) {
-    Serial.println("Sensor ready.");
-  } else {
-    Serial.println("Sensor ERROR!");
+  if (airSensor.init() == 0) {
+    Serial.println("airSensor failed!");
   }
 
-  Serial.println("Serial started.");
   if (dustSensor.init() == -2) {
-    Serial.println("HM330X init failed!");
+    Serial.println("HM330X failed!");
   }
 
-  Serial.println(F("DHTxx test!"));
+  if (sgp_probe() == -1) {
+    Serial.println("SGP failed!");
+  }
+
   dht.begin();
-
-  while (sgp_probe() != STATUS_OK) {
-    Serial.println("SGP failed");
-    while (1);
-  }
 }
 
 
