@@ -18,6 +18,10 @@ DHT dht(DHTPIN, DHTTYPE);
 #include "sensirion_common.h"
 #include "sgp30.h"
 
+#include "Seeed_BMP280.h"
+#include <Wire.h>
+BMP280 bmp280;
+
 
 void setup() {
   pinMode(ledPin, OUTPUT);
@@ -46,6 +50,10 @@ void setup() {
     Serial.println("SGP failed!");
   }
 
+  if(!bmp280.init()){
+    Serial.println("Device error!");
+  }
+
   dht.begin();
 }
 
@@ -56,8 +64,9 @@ void loop() {
   dustDetection();
   humidityAndTemperature();
   co2AndTvocConcentration();
-  oledDisplay();
+  barometerSensor();
   ledControl();
+  oledDisplay();
 
   delay(10000);
 }
@@ -189,5 +198,22 @@ void ledControl() {
   delay(1000);
   digitalWrite(ledPin, LOW);
 
-  Serial.println("========================");
+  Serial.println("------------------------");
+}
+
+
+void barometerSensor() {
+  Serial.print("Temp: ");
+  Serial.print(bmp280.getTemperature());
+  Serial.println("C");
+
+  Serial.print("Pressure: ");
+  Serial.print(pressure = bmp280.getPressure());
+  Serial.println("Pa");
+
+  Serial.print("Altitude: ");
+  Serial.print(bmp280.calcAltitude(pressure));
+  Serial.println("m");
+
+  Serial.println("------------------------");
 }

@@ -13,6 +13,7 @@ float ratio;
 float humidity;
 float temperature;
 float hic;
+float pressure;
 
 uint8_t dustData[30];
 
