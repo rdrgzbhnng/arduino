@@ -1,8 +1,8 @@
-HM330XErrorCode print_result(const char* dustStr, uint16_t value) {
-  if (NULL == dustStr) {
+HM330XErrorCode print_result(const char* hm330Str, uint16_t value) {
+  if (NULL == hm330Str) {
     return ERROR_PARAM;
   }
-  Serial.print(dustStr);
+  Serial.print(hm330Str);
   Serial.println(value);
   return NO_ERROR;
 }
@@ -14,7 +14,7 @@ HM330XErrorCode parse_result(uint8_t* data) {
   }
   for (int i = 1; i < 8; i++) {
     value = (uint16_t) data[i * 2] << 8 | data[i * 2 + 1];
-    print_result(dustStr[i - 1], value);
+    print_result(hm330Str[i - 1], value);
   }
   return NO_ERROR;
 }

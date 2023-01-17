@@ -2,22 +2,22 @@ int airQualityPin = A0;
 int gasDetectionPin = A6;
 int ledPin = 4;
 
-int quality;
+int aqsData;
 
-float sensor_volt;
-float RS_air;
-float R0;
-float sensorValue;
-float RS_gas;
-float ratio;
-float humidity;
-float temperature;
-float hic;
-float pressure;
+float mq9Volt;
+float mq9Data;
+float mq9RsAir;
+float mq9R0;
+float mq9RsGas;
+float mq9GasRatio;
+float dhtHumidity;
+float dhtTemperature;
+float dhtHic;
+float bmp280Pressure;
 
-uint8_t dustData[30];
+uint8_t hm330Data[30];
 
-const char* dustStr[] = {"sensor num: ",
+const char* hm330Str[] = {"sensor num: ",
                        "PM1.0 concentration(CF=1,Standard particulate matter, unit:ug/m3): ",
                        "PM2.5 concentration(CF=1,Standard particulate matter, unit:ug/m3): ",
                        "PM10. concentration(CF=1,Standard particulate matter, unit:ug/m3): ",
