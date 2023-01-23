@@ -44,18 +44,31 @@ if (sgp30Tvoc_ppb < 300) {
   Serial.println("------------------------");
   delay(10000);
 
-  if (sgp30Co2_eq_ppm < 400) {
-    Serial.println("Wrong CO2eq Concentration detected");
-    oledMessage = "Sensor issue!";
+  if (sgp30Co2_eq_ppm > 950) {
+    Serial.println("Hazardous CO2eq Concentration detected");
+    oledMessage = "Hazardous CO2eq\nconcentration!!";
+    oledDisplay(oledMessage);
     ledControl(3);
- } else if (sgp30Co2_eq_ppm > 420) {
+  } else if (sgp30Co2_eq_ppm > 750) {
+    Serial.println("Strong CO2eq Concentration detected");
+    oledMessage = "Strong CO2eq\nconcentration!";
+    oledDisplay(oledMessage);
+    ledControl(2);
+  } else if (sgp30Co2_eq_ppm > 550) {
     Serial.println("High CO2eq Concentration detected");
-    oledMessage = "High CO2eq\nconcentration!!";
-    ledControl(3);
-  } else {
+    oledMessage = "High CO2eq\nconcentration!";
+    oledDisplay(oledMessage);
+    ledControl(1);
+  } else if (sgp30Co2_eq_ppm > 350) {
     Serial.println("Normal CO2eq Concentration");
     oledMessage = "Normal CO2eq\nconcentration";
+    oledDisplay(oledMessage);
     ledControl(0);
+  } else {
+    Serial.println("Misreading of CO2eq Concentration");
+    oledMessage = "Misreading\nreading CO2eq";
+    oledDisplay(oledMessage);
+    ledControl(3);
   }
 
   Serial.println("------------------------");
