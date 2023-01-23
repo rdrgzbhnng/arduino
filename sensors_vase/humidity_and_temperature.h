@@ -23,31 +23,36 @@ void humidityAndTemperature() {
 
   if (dhtHic > 40) {
     Serial.println("Dangerously hot");
-    oledMessage = "Dangerously hot";
-    ledControl(2);
+    oledMessage = "Dangerously hot!!";
+    ledControl(3);
+    oledDisplay(oledMessage);
   } else if (dhtHic > 30) {
-    Serial.println("pretty hot");
-    oledMessage = "pretty hot";
+    Serial.println("Pretty hot");
+    oledMessage = "Pretty hot!!";
     ledControl(2);
+    oledDisplay(oledMessage);
   } else if (dhtHic > 25) {
     Serial.println("Open doors and windows");
-    oledMessage = "Open doors and\nwindows";
-    ledControl(2);
+    oledMessage = "Open doors and\nwindows!";
+    ledControl(1);
+    oledDisplay(oledMessage);
   } else if (dhtHic < 15) {
     Serial.println("Try turning up the heat");
-    oledMessage = "Try turning up\nthe heat";
-    ledControl(2);
+    oledMessage = "Try turning up\nthe heat!";
+    ledControl(1);
+    oledDisplay(oledMessage);
   } else if (dhtHic < 5) {
     Serial.println("Too cold");
-    oledMessage = "Too cold";
+    oledMessage = "Too cold!!";
     ledControl(2);
+    oledDisplay(oledMessage);
   } else {
     Serial.println("Nice tempeture");
     oledMessage = "Nice tempeture";
     ledControl(0);
+    oledDisplay(oledMessage);
   }
 
-  oledDisplay(oledMessage);
   Serial.println("------------------------");
   delay(10000);
 }

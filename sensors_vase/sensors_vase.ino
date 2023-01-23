@@ -14,6 +14,9 @@ AirQualitySensor airSensor(airQualityPin);
 #include <Seeed_HM330X.h>
 HM330X dustSensor;
 #include "hm330x_errors.h"
+
+#include <Tomoto_HM330X.h>
+Tomoto_HM330X dustSensorLE;
 #include "dust_detection.h"
 
 #include "DHT.h"
@@ -51,10 +54,11 @@ void setup() {
 
 
 void loop() {
-  // airQuality();
-  // gasDetection();
+  airQuality();
+  gasDetection();
   dustDetection();
-  // humidityAndTemperature();
-  // co2AndTvocConcentration();
-  // barometerSensor();
+  dustDetectionLE();
+  humidityAndTemperature();
+  co2AndTvocConcentration();
+  barometerSensor();
 }

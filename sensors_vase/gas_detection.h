@@ -31,14 +31,16 @@ void gasDetection() {
 
   if (mq9RsGas > 300) {
     Serial.println("Gas has been detected in the air");
-    oledMessage = "Gas was detected";
+    oledMessage = "Gas was detected!!";
     ledControl(3);
+    oledDisplay(oledMessage);
   } else {
     Serial.println("No gas has been detected");
     oledMessage = "No gas detected";
     ledControl(0);
+    oledDisplay(oledMessage);
   }
-  oledDisplay(oledMessage);
+
   Serial.println("------------------------");
   delay(10000);
 }

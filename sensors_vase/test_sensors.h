@@ -16,6 +16,5 @@ void testSensors() {
   }
 
   Serial.println("Sensors okay!");
-
   Serial.println("------------------------");
 }

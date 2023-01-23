@@ -5,24 +5,27 @@ void airQuality() {
   Serial.println(airSensor.getValue());
 
   if (aqsData == AirQualitySensor::FORCE_SIGNAL) {
-    oledMessage = "Air Quality:\nDangerous!!";
-    Serial.println("Dangerous pollution! ");
+    oledMessage = "Dangerous air quality!!";
+    Serial.println("Dangerous pollution!!");
     ledControl(3);
+    oledDisplay(oledMessage);
   } else if (aqsData == AirQualitySensor::HIGH_POLLUTION) {
-    oledMessage = "Air Quality:\nHigh pollution";
-    Serial.println("High pollution");
+    oledMessage = "High pollution in the air";
+    Serial.println("High pollution!");
     ledControl(2);
+    oledDisplay(oledMessage);
   } else if (aqsData == AirQualitySensor::LOW_POLLUTION) {
-    oledMessage = "Air Quality:\nLow pollution";
+    oledMessage = "Low pollution in the air";
     Serial.println("Low pollution");
     ledControl(1);
+    oledDisplay(oledMessage);
   } else if (aqsData == AirQualitySensor::FRESH_AIR) {
-    oledMessage = "Air Quality:\nFresh air";
+    oledMessage = "Fresh air";
     Serial.println("Fresh air");
     ledControl(0);
+    oledDisplay(oledMessage);
   }
 
-  oledDisplay(oledMessage);
   Serial.println("------------------------");
   delay(10000);
 }

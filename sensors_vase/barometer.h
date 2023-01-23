@@ -13,19 +13,21 @@ void barometerSensor() {
 
   if (bmp280Pressure > 102268.9) {
     Serial.println("High Pressure!!!");
-    oledMessage = "Pressure:\nHigh Pressure";
+    oledMessage = "High pressure\nwas detected!!";
     ledControl(2);
+    oledDisplay(oledMessage);
   } else if (bmp280Pressure < 100914.4) {
     Serial.println("Low Pressure!!!");
-    oledMessage = "Pressure:\nLow Pressure";
+    oledMessage = "Low Pressure\nwas detected!!";
     ledControl(2);
+    oledDisplay(oledMessage);
   } else {
     Serial.println("Pressure seems normal.");
-    oledMessage = "Pressure:\nSeems normal";
+    oledMessage = "Air pressure\nseems normal";
     ledControl(0);
+    oledDisplay(oledMessage);
   }
 
-  oledDisplay(oledMessage);
   Serial.println("------------------------");
   delay(10000);
 }

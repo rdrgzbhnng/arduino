@@ -16,44 +16,48 @@ void co2AndTvocConcentration() {
 
 if (sgp30Tvoc_ppb < 300) {
     Serial.println("tVOC Concentration: No objections");
-    oledMessage = "tVOC\nConcentration:\nExcellent";
+    oledMessage = "Excellent tVOC\nconcentration";
     ledControl(0);
+    oledDisplay(oledMessage);
   } else if (sgp30Tvoc_ppb < 1000) {
     Serial.println("tVOC Concentration: Ventilation/airing recommended");
-    oledMessage = "tVOC\nConcentration:\nGood";
+    oledMessage = "Good tVOC\nconcentration";
     ledControl(1);
+    oledDisplay(oledMessage);
   } else if (sgp30Tvoc_ppb < 3000) {
     Serial.println("tVOC Concentration: Intensified ventilation recommended");
-    oledMessage = "tVOC\nConcentration:\nModerate";
+    oledMessage = "Moderate tVOC\nconcentration";
     ledControl(2);
+    oledDisplay(oledMessage);
   } else if (sgp30Tvoc_ppb > 10000) {
     Serial.println("tVOC Concentration: Intensified ventilation/airing necessary");
-    oledMessage = "tVOC\nConcentration:\nPoor";
+    oledMessage = "Poor tVOC\nconcentration!";
     ledControl(3);
+    oledDisplay(oledMessage);
   } else {
     Serial.println("tVOC Concentration: Hazardous");
-    oledMessage = "tVOC\nConcentration:\nUnhealthy";
+    oledMessage = "Unhealthy tVOC\nconcentration!";
     ledControl(3);
+    oledDisplay(oledMessage);
   } 
 
-  oledDisplay(oledMessage);
+  Serial.println("------------------------");
   delay(10000);
 
   if (sgp30Co2_eq_ppm < 400) {
     Serial.println("Wrong CO2eq Concentration detected");
-    oledMessage = "Sensor issue";
+    oledMessage = "Sensor issue!";
     ledControl(3);
  } else if (sgp30Co2_eq_ppm > 420) {
     Serial.println("High CO2eq Concentration detected");
-    oledMessage = "High CO2eq";
+    oledMessage = "High CO2eq\nconcentration!!";
     ledControl(3);
   } else {
     Serial.println("Normal CO2eq Concentration");
-    oledMessage = "Normal CO2eq\nConcentration";
+    oledMessage = "Normal CO2eq\nconcentration";
     ledControl(0);
   }
-  oledDisplay(oledMessage);
+
   Serial.println("------------------------");
   delay(10000);
-
 }
