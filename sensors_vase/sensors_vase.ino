@@ -33,11 +33,14 @@ DHT dht(DHTPIN, DHTTYPE);
 BMP280 bmp280;
 #include "barometer.h"
 
+#include "potentiometer.h"
+
 #include <Wire.h>
 #include "test_sensors.h"
 
 void setup() {
   pinMode(ledPin, OUTPUT);
+  pinMode(potentiometerPin, INPUT);
 
   Serial.begin(115200);
   delay(3000);
@@ -61,4 +64,5 @@ void loop() {
   humidityAndTemperature();
   co2AndTvocConcentration();
   barometerSensor();
+  potentiometerSensor();
 }

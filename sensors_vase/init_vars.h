@@ -1,9 +1,13 @@
 char* oledMessage;
 
 int airQualityPin = A0;
+int potentiometerPin = A2;
 int gasDetectionPin = A6;
 int ledPin = 4;
+
 int aqsData;
+int potentiometerData;
+int potentiometerMap;
 
 float mq9Volt;
 float mq9Data;
