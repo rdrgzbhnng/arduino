@@ -13,3 +13,5 @@
 * https://github.com/olikraus/U8g2_Arduino/archive/master.zip
 * https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/
 * https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BMP280/
+* https://wiki.seeedstudio.com/Grove-Rotary_Angle_Sensor/
+* https://wiki.seeedstudio.com/Grove-4-Digit_Display/
