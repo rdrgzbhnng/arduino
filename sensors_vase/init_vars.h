@@ -1,9 +1,11 @@
 char* oledMessage;
 
-int airQualityPin = A0;
-int potentiometerPin = A2;
-int gasDetectionPin = A6;
-int ledPin = 4;
+const int airQualityPin = A0;
+const int potentiometerPin = A2;
+const int gasDetectionPin = A6;
+const int ledPin = 4;
+const int fourDigitCLK = 6;
+const int fourDigitDIO = 7;
 
 int aqsData;
 int potentiometerData;

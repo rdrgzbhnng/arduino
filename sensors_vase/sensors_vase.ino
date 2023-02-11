@@ -38,6 +38,10 @@ BMP280 bmp280;
 #include <Wire.h>
 #include "test_sensors.h"
 
+#include "TM1637.h"
+TM1637 tm1637(fourDigitCLK, fourDigitDIO);
+#include "four_digit_display.h"
+
 void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(potentiometerPin, INPUT);
@@ -52,6 +56,10 @@ void setup() {
   u8x8.setFlipMode(1);
 
   dht.begin();
+
+  tm1637.init();
+  tm1637.set(BRIGHT_DARKEST);//BRIGHT_TYPICAL = 2,BRIGHT_DARKEST = 0,BRIGHTEST = 7;
+
   testSensors();
 }
 
@@ -65,4 +73,6 @@ void loop() {
   co2AndTvocConcentration();
   barometerSensor();
   potentiometerSensor();
+
+ // fourDigitDisplay("loop");
 }

@@ -15,3 +15,5 @@
 * https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BMP280/
 * https://wiki.seeedstudio.com/Grove-Rotary_Angle_Sensor/
 * https://wiki.seeedstudio.com/Grove-4-Digit_Display/
+* https://github.com/Seeed-Studio/Grove_4Digital_Display/
+
