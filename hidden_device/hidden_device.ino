@@ -39,8 +39,6 @@ void loop() {
     fsrSensor = analogRead(FSR_PIN);
     Serial.print("FSR reading: ");
     Serial.println(fsrSensor);
-    Serial.print("Control time: ");
-    Serial.println(controlTime);
 
     if (controlTime > 21600000) {
       reset();
@@ -62,6 +60,10 @@ void loop() {
     }
 
     controlTime = millis();
+    Serial.print("Control time: ");
+    Serial.println(controlTime);
+    Serial.println("---------------------");
+
     digitalWrite(LED_BUILTIN, LOW);
   }
 }
