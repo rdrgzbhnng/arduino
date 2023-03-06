@@ -41,11 +41,17 @@ void loop() {
       reset();
     }
 
-    if ((fsrSensor > 680) && (fsrSensor <= 920)) {
+    if ((fsrSensor > 780) && (fsrSensor <= 920)) {
+      Serial.println("Beep!");
       beep();
-    } else if ((fsrSensor > 550) && (fsrSensor <= 680)) {
+    } else if ((fsrSensor > 920) && (fsrSensor <= 960)) {
+      Serial.println("Beep! Beep!");
+      beep(); beep();
+    } else if ((fsrSensor > 640) && (fsrSensor <= 780)) {
+      Serial.println("Beep! Beep!");
       beep(); beep();
     } else {
+      Serial.println("Beep! Beep! Beep!");
       beep(); beep(); beep();
       siren();
     }
@@ -71,7 +77,7 @@ void reset() {
 
 void siren() {
   digitalWrite(ALARM_PIN, LOW);
-  Serial.println("THE ALARM IS GOING OFF!");
+  Serial.println("The alarm is going off!");
   delay(alarmRunning);
   digitalWrite(ALARM_PIN, HIGH);
 }
