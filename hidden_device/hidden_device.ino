@@ -3,20 +3,20 @@ const int RESET_PIN     =       7;
 const int ALARM_PIN     =       9;
 const int ALARM_CONTROL =      11;
 const int SAMPLE_TIME   =   10000;
-const int ALARM_DELAY   =     500;
+const int ALARM_DELAY   =    3000;
 const int ALARM_RUNNING =  180000;
-const int BEEP_DELAY    =     100;
+const int BEEP_DELAY    =       3;
 
 int fsrSensor;
 
-int minFrom             =     640;
-int safeFrom            =     780;
-int safeUntil           =     920;
-int maxUntil            =     960;
+int alarmPoint          =     320;
+int safeFrom            =     560;
+int safeUntil           =     980;
 
 unsigned long duration;
 unsigned long controlTime;
 
+#include <SoftwareSerial.h>
 
 void setup() {
   digitalWrite(RESET_PIN, HIGH);
@@ -28,6 +28,7 @@ void setup() {
   pinMode(ALARM_PIN, OUTPUT);
   pinMode(FSR_PIN, INPUT);
 
+  Serial.begin(9600);
   controlTime = millis();
 }
 
@@ -44,13 +45,10 @@ void loop() {
       reset();
     }
 
-    if ((fsrSensor > safeFrom) && (fsrSensor <= safeUntil)) {
+    if ((fsrSensor > safeFrom) && (fsrSensor < safeUntil)) {
       Serial.println("Beep!");
       beep();
-    } else if ((fsrSensor > safeUntil) && (fsrSensor <= maxUntil)) {
-      Serial.println("Beep! Beep!");
-      beep(); beep();
-    } else if ((fsrSensor >= minFrom) && (fsrSensor <= safeFrom)) {
+    } else if ((fsrSensor > alarmPoint) && (fsrSensor <= safeFrom)) {
       Serial.println("Beep! Beep!");
       beep(); beep();
     } else {
@@ -70,9 +68,9 @@ void loop() {
 
 
 void beep() {
-  tone(ALARM_CONTROL, 10);
+  digitalWrite(ALARM_CONTROL, HIGH);
   delay(BEEP_DELAY);
-  tone(ALARM_CONTROL, 0);
+  digitalWrite(ALARM_CONTROL, LOW);
   delay(ALARM_DELAY);
 }
 
