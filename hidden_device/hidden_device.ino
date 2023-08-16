@@ -1,10 +1,13 @@
 const int FSR_PIN       =      A0;
+const int RX_PIN        =       3;
+const int TX_PIN        =       5;
 const int RESET_PIN     =       7;
 const int ALARM_PIN     =       9;
 const int ALARM_CONTROL =      11;
 const int SAMPLE_TIME   =   10000;
 const int ALARM_DELAY   =    3000;
 const int ALARM_RUNNING =  180000;
+const int WIFI_TIMEOUT =     2000;
 const int BEEP_DELAY    =       3;
 
 int fsrSensor;
@@ -23,7 +26,7 @@ String requestHTTP;
 char msg;
 
 #include <SoftwareSerial.h>
-SoftwareSerial SerialESP8266(3,5);
+SoftwareSerial SerialESP8266(RX_PIN, TX_PIN);
 
 void setup() {
   digitalWrite(RESET_PIN, HIGH);
@@ -39,7 +42,7 @@ void setup() {
   controlTime = millis();
 
   SerialESP8266.begin(9600);
-  SerialESP8266.setTimeout(2000);
+  SerialESP8266.setTimeout(WIFI_TIMEOUT);
 
   SerialESP8266.println("AT");
   if (SerialESP8266.find("OK")) {
@@ -60,7 +63,7 @@ void setup() {
     Serial.println("ESP8266 in Station mode");
   }
 
-  SerialESP8266.setTimeout(10000);
+  SerialESP8266.setTimeout(WIFI_TIMEOUT*10);
   SerialESP8266.println("AT+CWJAP=\"MIWIFI_Fuyq\",\"uE3XGyUa\"");
 
   Serial.println("Connecting to the network");
@@ -70,12 +73,11 @@ void setup() {
     Serial.println("Error connecting to the network");
   }
 
-  SerialESP8266.setTimeout(2000);
+  SerialESP8266.setTimeout(WIFI_TIMEOUT);
   SerialESP8266.println("AT+CIPMUX=0");
   if (SerialESP8266.find("OK")) {
     Serial.println("Multi-connections disabled");
   }
-  delay(1000);
 }
 
 
