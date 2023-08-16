@@ -6,12 +6,16 @@ const int ALARM_PIN     =        9;
 const int ALARM_CONTROL =       11;
 const int SAMPLE_TIME   =    10000;
 const int ALARM_DELAY   =     3000;
-const int ALARM_RUNNING =   180000;
+const int ALARM_RUNNING =    30000;
 const int WIFI_TIMEOUT  =     2000;
 const int BEEP_DELAY    =        3;
+const int BUZZ_DELAY    =     3000;
+const int WAITING_TIME =         5;
 const int RESET_DELAY   = 21600000;
 
 int fsrSensor;
+int controlFSR;
+int fsrSensorReload;
 
 int alarmPoint          =      320;
 int safeFrom            =      560;
@@ -105,10 +109,7 @@ void loop() {
       Serial.println("Beep! Beep!");
       beep(); beep();
     } else {
-      Serial.println("Beep! Beep! Beep!");
-      beep(); beep(); beep();
-      ifttt();
-      siren();
+      trigger();
     }
 
     controlTime = millis();
@@ -116,6 +117,12 @@ void loop() {
     Serial.println(controlTime);
     Serial.println("---------------------");
   }
+}
+
+
+void reset() {
+  Serial.println("Reseting");
+  digitalWrite(RESET_PIN, LOW);
 }
 
 
@@ -127,8 +134,11 @@ void beep() {
 }
 
 
-void reset() {
-  digitalWrite(RESET_PIN, LOW);
+void buzz() {
+  digitalWrite(ALARM_CONTROL, HIGH);
+  delay(BUZZ_DELAY);
+  digitalWrite(ALARM_CONTROL, LOW);
+  delay(ALARM_DELAY);
 }
 
 
@@ -136,13 +146,12 @@ void siren() {
   digitalWrite(ALARM_PIN, HIGH);
   Serial.println("The alarm is going off!");
   delay(ALARM_RUNNING);
-  digitalWrite(ALARM_PIN, LOW);
+  reset();
 }
 
 
 void ifttt() {
   if (SerialESP8266.available()) {
-
     SerialESP8266.println("AT+CIPSTART=\"TCP\",\"maker.ifttt.com\",80");
     if (SerialESP8266.find("CONNECT")) {
       Serial.println("Server connected");
@@ -198,5 +207,28 @@ void ifttt() {
     }
   } else {
     Serial.println("SerialESP8266 not available");
+  }
+}
+
+
+void trigger() {
+  controlFSR = 0;
+  fsrSensorReload = 0;
+
+  while ((fsrSensorReload < alarmPoint) || (fsrSensorReload > safeUntil)) {
+    Serial.println("Reading FSR again");
+    fsrSensorReload = analogRead(FSR_PIN);
+    Serial.print("fsrSensorReload: ");
+    Serial.println(fsrSensorReload);
+
+    controlFSR++;
+    Serial.print("controlFSR: ");
+    Serial.println(controlFSR);
+    buzz();
+
+    if (controlFSR >= WAITING_TIME) {
+      ifttt();
+      siren();
+    }
   }
 }
