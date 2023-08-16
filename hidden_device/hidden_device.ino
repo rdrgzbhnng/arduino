@@ -85,16 +85,18 @@ void setup() {
 
 void loop() {
   if ((millis() - controlTime) > SAMPLE_TIME) {
+    if (controlTime > RESET_DELAY) {
+      reset();
+      Serial.println("Control time was reset");
+    }
+
     digitalWrite(LED_BUILTIN, HIGH);
 
     fsrSensor = analogRead(FSR_PIN);
     Serial.print("FSR reading: ");
     Serial.println(fsrSensor);
 
-    if (controlTime > RESET_DELAY) {
-      reset();
-      Serial.println("Control time was reset");
-    }
+    digitalWrite(LED_BUILTIN, LOW);
 
     if ((fsrSensor > safeFrom) && (fsrSensor < safeUntil)) {
       Serial.println("Beep!");
@@ -113,8 +115,6 @@ void loop() {
     Serial.print("Control time: ");
     Serial.println(controlTime);
     Serial.println("---------------------");
-
-    digitalWrite(LED_BUILTIN, LOW);
   }
 }
 
