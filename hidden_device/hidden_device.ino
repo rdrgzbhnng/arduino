@@ -16,7 +16,14 @@ int safeUntil           =     980;
 unsigned long duration;
 unsigned long controlTime;
 
+long initial_time;
+boolean response_end;
+String message;
+String requestHTTP;
+char msg;
+
 #include <SoftwareSerial.h>
+SoftwareSerial SerialESP8266(3,5);
 
 void setup() {
   digitalWrite(RESET_PIN, HIGH);
@@ -30,6 +37,45 @@ void setup() {
 
   Serial.begin(9600);
   controlTime = millis();
+
+  SerialESP8266.begin(9600);
+  SerialESP8266.setTimeout(2000);
+
+  SerialESP8266.println("AT");
+  if (SerialESP8266.find("OK")) {
+    Serial.println("Correct AT answer");
+  } else {
+    Serial.println("Error in ESP8266");
+  }
+
+  SerialESP8266.println("AT+UART_DEF=9600,8,1,0,0");
+  if (SerialESP8266.find("AT+UART_DEF=9600,8,1,0,0")) {
+    Serial.println("Correct speed response");
+  } else {
+    Serial.println("Speed error");
+  }
+
+  SerialESP8266.println("AT+CWMODE=1");
+  if (SerialESP8266.find("")) {
+    Serial.println("ESP8266 in Station mode");
+  }
+
+  SerialESP8266.setTimeout(10000);
+  SerialESP8266.println("AT+CWJAP=\"MIWIFI_Fuyq\",\"uE3XGyUa\"");
+
+  Serial.println("Connecting to the network");
+  if (SerialESP8266.find("OK")) {
+    Serial.println("WIFI connected");
+  } else {
+    Serial.println("Error connecting to the network");
+  }
+
+  SerialESP8266.setTimeout(2000);
+  SerialESP8266.println("AT+CIPMUX=0");
+  if (SerialESP8266.find("OK")) {
+    Serial.println("Multi-connections disabled");
+  }
+  delay(1000);
 }
 
 
@@ -54,6 +100,7 @@ void loop() {
     } else {
       Serial.println("Beep! Beep! Beep!");
       beep(); beep(); beep();
+      ifttt();
       siren();
     }
 
@@ -85,4 +132,66 @@ void siren() {
   Serial.println("The alarm is going off!");
   delay(ALARM_RUNNING);
   digitalWrite(ALARM_PIN, HIGH);
+}
+
+
+void ifttt() {
+  if (SerialESP8266.available()) {
+
+    SerialESP8266.println("AT+CIPSTART=\"TCP\",\"maker.ifttt.com\",80");
+    if (SerialESP8266.find("CONNECT")) {
+      Serial.println("Server connected");
+    }
+
+    requestHTTP= "GET /trigger/macStudio/with/key/dVJCyJon9DxP4MkPio8RH4 HTTP/1.1\r\n";
+    requestHTTP = requestHTTP + "Host: maker.ifttt.com\r\n\r\n";
+
+    SerialESP8266.print("AT+CIPSEND=");
+    SerialESP8266.println(requestHTTP.length());
+    if (SerialESP8266.find(">")) {
+      Serial.println("Ready to send HTTP");
+    }
+
+    SerialESP8266.println(requestHTTP);
+    if (SerialESP8266.find("SEND OK")) {
+      Serial.println("HTTP request sent:");
+      Serial.println(requestHTTP);
+    }
+
+    response_end = false;
+    initial_time = millis();
+    message = "";
+
+    while (response_end==false) {
+      while (SerialESP8266.available()>0) {
+        msg=SerialESP8266.read();
+        Serial.write(msg);
+        message.concat(msg);
+      }
+
+      if (message.length() > 500) {
+        Serial.println("The response to exceeded the maximum size");
+        SerialESP8266.println("AT+CIPCLOSE");
+        if (SerialESP8266.find("OK"))
+          Serial.println("Connection terminated");
+        response_end = true;
+      }
+
+      if ((millis()-initial_time) > 10000) {
+        Serial.println("Timeout");
+        SerialESP8266.println("AT+CIPCLOSE");
+        if (SerialESP8266.find("OK"))
+          Serial.println("Connection terminated");
+        response_end = true;
+      }
+
+      if (message.indexOf("CLOSED") > 0) {
+        Serial.println();
+        Serial.println("Message received successfully, Connection terminated");
+        response_end = true;
+      }
+    }
+  } else {
+    Serial.println("SerialESP8266 not available");
+  }
 }
