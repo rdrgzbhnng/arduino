@@ -38,8 +38,8 @@ void setup() {
   pinMode(ALARM_PIN, OUTPUT);
   pinMode(FSR_PIN, INPUT);
 
-  Serial.begin(9600);
   controlTime = millis();
+  Serial.begin(9600);
 
   SerialESP8266.begin(9600);
   SerialESP8266.setTimeout(WIFI_TIMEOUT);
@@ -59,7 +59,8 @@ void setup() {
   }
 
   SerialESP8266.println("AT+CWMODE=1");
-  if (SerialESP8266.find("")) {
+  SerialESP8266.println("AT+CWMODE?");
+  if (SerialESP8266.find("1")) {
     Serial.println("ESP8266 in Station mode");
   }
 
