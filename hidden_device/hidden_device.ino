@@ -1,29 +1,30 @@
-const int FSR_PIN       =      A0;
-const int RX_PIN        =       3;
-const int TX_PIN        =       5;
-const int RESET_PIN     =       7;
-const int ALARM_PIN     =       9;
-const int ALARM_CONTROL =      11;
-const int SAMPLE_TIME   =   10000;
-const int ALARM_DELAY   =    3000;
-const int ALARM_RUNNING =  180000;
-const int WIFI_TIMEOUT =     2000;
-const int BEEP_DELAY    =       3;
+const int FSR_PIN       =       A0;
+const int RX_PIN        =        3;
+const int TX_PIN        =        5;
+const int RESET_PIN     =        7;
+const int ALARM_PIN     =        9;
+const int ALARM_CONTROL =       11;
+const int SAMPLE_TIME   =    10000;
+const int ALARM_DELAY   =     3000;
+const int ALARM_RUNNING =   180000;
+const int WIFI_TIMEOUT  =     2000;
+const int BEEP_DELAY    =        3;
+const int RESET_DELAY   = 21600000;
 
 int fsrSensor;
 
-int alarmPoint          =     320;
-int safeFrom            =     560;
-int safeUntil           =     980;
+int alarmPoint          =      320;
+int safeFrom            =      560;
+int safeUntil           =      980;
 
 unsigned long duration;
 unsigned long controlTime;
 
 long initial_time;
+char msg;
 boolean response_end;
 String message;
 String requestHTTP;
-char msg;
 
 #include <SoftwareSerial.h>
 SoftwareSerial SerialESP8266(RX_PIN, TX_PIN);
@@ -90,8 +91,9 @@ void loop() {
     Serial.print("FSR reading: ");
     Serial.println(fsrSensor);
 
-    if (controlTime > 21600000) {
+    if (controlTime > RESET_DELAY) {
       reset();
+      Serial.println("Control time was reset");
     }
 
     if ((fsrSensor > safeFrom) && (fsrSensor < safeUntil)) {
