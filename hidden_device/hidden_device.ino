@@ -27,7 +27,7 @@ SoftwareSerial SerialESP8266(3,5);
 
 void setup() {
   digitalWrite(RESET_PIN, HIGH);
-  digitalWrite(ALARM_PIN, HIGH);
+  digitalWrite(ALARM_PIN, LOW);
 
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(ALARM_CONTROL, OUTPUT);
@@ -128,10 +128,10 @@ void reset() {
 
 
 void siren() {
-  digitalWrite(ALARM_PIN, LOW);
+  digitalWrite(ALARM_PIN, HIGH);
   Serial.println("The alarm is going off!");
   delay(ALARM_RUNNING);
-  digitalWrite(ALARM_PIN, HIGH);
+  digitalWrite(ALARM_PIN, LOW);
 }
 
 
