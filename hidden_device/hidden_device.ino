@@ -4,13 +4,14 @@ const int TX_PIN        =        5;
 const int RESET_PIN     =        7;
 const int ALARM_PIN     =        9;
 const int ALARM_CONTROL =       11;
+const int TOUCH_PIN     =       18;
 const int SAMPLE_TIME   =    10000;
 const int ALARM_DELAY   =     3000;
 const int ALARM_RUNNING =    30000;
 const int WIFI_TIMEOUT  =     2000;
 const int BEEP_DELAY    =        3;
 const int BUZZ_DELAY    =     3000;
-const int WAITING_TIME =         5;
+const int WAITING_TIME  =        5;
 const int RESET_DELAY   = 21600000;
 
 int fsrSensor;
@@ -42,6 +43,7 @@ void setup() {
   pinMode(RESET_PIN, OUTPUT);
   pinMode(ALARM_PIN, OUTPUT);
   pinMode(FSR_PIN, INPUT);
+  pinMode(TOUCH_PIN, INPUT);
 
   controlTime = millis();
   Serial.begin(9600);
@@ -117,6 +119,9 @@ void loop() {
     Serial.println(controlTime);
     Serial.println("---------------------");
   }
+  if (digitalRead(TOUCH_PIN)==HIGH) {
+    ifttt();
+  }
 }
 
 
@@ -157,7 +162,9 @@ void ifttt() {
       Serial.println("Server connected");
     }
 
-    requestHTTP= "GET /trigger/macStudio/with/key/dVJCyJon9DxP4MkPio8RH4 HTTP/1.1\r\n";
+    requestHTTP= "GET /trigger/macStudio/with/key/dVJCyJon9DxP4MkPio8RH4?";
+    requestHTTP = requestHTTP + "value1=" + fsrSensor;
+    requestHTTP = requestHTTP + " HTTP/1.1\r\n";
     requestHTTP = requestHTTP + "Host: maker.ifttt.com\r\n\r\n";
 
     SerialESP8266.print("AT+CIPSEND=");
