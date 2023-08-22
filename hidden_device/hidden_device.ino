@@ -3,8 +3,9 @@ const int RX_PIN        =        3;
 const int TX_PIN        =        5;
 const int RESET_PIN     =        7;
 const int ALARM_PIN     =        9;
-const int ALARM_CONTROL =       11;
-const int TOUCH_PIN     =       18;
+const int TOUCH_PIN     =       11;
+const int ALARM_CONTROL =       13;
+const int LED_PIN       =       19;
 const int SAMPLE_TIME   =    10000;
 const int ALARM_DELAY   =     3000;
 const int ALARM_RUNNING =    30000;
@@ -42,6 +43,7 @@ void setup() {
   pinMode(ALARM_CONTROL, OUTPUT);
   pinMode(RESET_PIN, OUTPUT);
   pinMode(ALARM_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
   pinMode(FSR_PIN, INPUT);
   pinMode(TOUCH_PIN, INPUT);
 
@@ -133,8 +135,10 @@ void reset() {
 
 void beep() {
   digitalWrite(ALARM_CONTROL, HIGH);
+  digitalWrite(LED_PIN, HIGH);
   delay(BEEP_DELAY);
   digitalWrite(ALARM_CONTROL, LOW);
+  digitalWrite(LED_PIN, LOW);
   delay(ALARM_DELAY);
 }
 
